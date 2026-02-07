@@ -1,0 +1,55 @@
+<%- include('partials/header') %>
+
+    <div class="row justify-content-center py-5">
+        <div class="col-md-5 col-lg-4">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5 text-center">
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor"
+                            class="bi bi-shield-lock text-warning" viewBox="0 0 16 16">
+                            <path
+                                d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+                        </svg>
+                    </div>
+
+                    <h3 class="fw-bold mb-3 <%= lang === 'ar' ? 'text-end' : '' %>">
+                        <%= t.login.title %>
+                    </h3>
+                    <p class="text-muted mb-4 small <%= lang === 'ar' ? 'text-end' : '' %>">
+                        <%= t.login.subtitle %>
+                    </p>
+
+                    <% if (error) { %>
+                        <div
+                            class="alert alert-danger bg-danger-subtle text-danger border-0 rounded-3 mb-4 small fw-bold <%= lang === 'ar' ? 'text-end' : '' %>">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-exclamation-circle-fill me-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                            </svg>
+                            <%= error %>
+                        </div>
+                        <% } %>
+
+                            <a href="/auth/google"
+                                class="btn btn-white border shadow-sm w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-3 hover-scale transition-all">
+                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="24" height="24"
+                                    alt="Google">
+                                <%= t.login.googleButton %>
+                            </a>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .hover-scale {
+                transition: transform 0.2s;
+            }
+
+            .hover-scale:hover {
+                transform: scale(1.02);
+                background-color: #f8f9fa;
+            }
+        </style>
+
+        <%- include('partials/footer') %>

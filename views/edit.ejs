@@ -1,0 +1,100 @@
+<%- include('partials/header') %>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-warning">
+                <div class="card-header bg-warning text-dark fw-bold d-flex justify-content-between align-items-center">
+                    <span>
+                        <%= t.admin.form.editTitle %>
+                    </span>
+                    <a href="/admin" class="btn btn-sm btn-dark">
+                        <%= t.admin.form.cancel %>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/edit/<%= product.id %>" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">
+                                <%= t.admin.form.title %>
+                            </label>
+                            <input type="text" name="title" class="form-control" value="<%= product.title %>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">
+                                <%= t.admin.form.price %>
+                            </label>
+                            <input type="number" name="price" class="form-control" value="<%= product.price %>"
+                                required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">
+                                <%= t.admin.form.description %>
+                            </label>
+                            <textarea name="description" class="form-control" rows="3"
+                                required><%= product.description %></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">
+                                <%= t.admin.form.features %>
+                            </label>
+                            <textarea name="features" class="form-control" rows="3"
+                                placeholder="<%= t.admin.form.featuresPlaceholder %>"><%= product.features ? product.features.join('\n') : '' %></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">
+                                <%= t.admin.form.warranty %>
+                            </label>
+                            <input type="text" name="warranty" class="form-control" value="<%= product.warranty %>"
+                                placeholder="<%= t.admin.form.warrantyPlaceholder %>">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">
+                                <%= t.admin.form.image %>
+                            </label>
+                            <% if (product.image) { %>
+                                <div class="mb-2">
+                                    <img src="<%= product.image.startsWith('http') ? product.image : '/uploads/' + product.image %>"
+                                        height="50" class="rounded border">
+                                </div>
+                                <% } %>
+                                    <input type="file" name="image" class="form-control" accept="image/*">
+                                    <div class="form-text text-muted small">
+                                        <%= lang==='ar' ? 'اتركه فارغاً للاحتفاظ بالصورة الحالية'
+                                            : 'Leave empty to keep current image' %>
+                                    </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">
+                                <%= lang==='ar' ? 'صور المعرض' : 'Gallery Images' %>
+                            </label>
+                            <% if (product.gallery && product.gallery.length> 0) { %>
+                                <div class="d-flex flex-wrap gap-2 mb-2">
+                                    <% product.gallery.forEach(img=> { %>
+                                        <img src="<%= img.startsWith('http') ? img : '/uploads/' + img %>" height="50"
+                                            class="rounded border">
+                                        <% }) %>
+                                </div>
+                                <% } %>
+                                    <input type="file" name="gallery" class="form-control" accept="image/*" multiple>
+                                    <div class="form-text text-muted small">
+                                        <%= lang==='ar' ? 'تحميل صور إضافية للمعرض'
+                                            : 'Upload additional images to gallery' %>
+                                    </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100">
+                            <%= t.admin.form.update %>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
