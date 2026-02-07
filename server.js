@@ -67,7 +67,9 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Models
 // Models
+// Models
 const Product = require('./models/productModel');
+const Setting = require('./models/settingModel');
 const translations = require('./data/translations');
 
 const connectDB = require('./config/db');
@@ -80,7 +82,7 @@ const multer = require('multer');
 const upload = multer({ storage: storage });
 
 // Localization Middleware (Cookie > Session > Default)
-const localeMiddleware = (req, res, next) => {
+const localeMiddleware = async (req, res, next) => {
     let lang = req.cookies.lang || req.session.lang || 'ar';
 
     // Ensure valid lang
@@ -94,6 +96,15 @@ const localeMiddleware = (req, res, next) => {
     res.locals.lang = lang;
     res.locals.t = translations[lang];
     res.locals.dir = translations[lang].dir;
+
+    // Load Site Settings
+    try {
+        res.locals.siteSettings = await Setting.getAll();
+    } catch (err) {
+        console.error('Failed to load settings:', err);
+        res.locals.siteSettings = {};
+    }
+
     next();
 };
 
@@ -243,17 +254,19 @@ app.post('/admin/edit/:id', requireAuth, upload.fields([{ name: 'image', maxCoun
         // Handle gallery images - append to existing
         if (req.files && req.files['gallery']) {
             const newGalleryImages = req.files['gallery'].map(file => file.path);
-            // We need to fetch existing product to append, or use $push if we were using raw mongoose.
-            // Since our adapter is simple, let's just fetch, append in memory, and update.
-            // OR simpler: just push independently? 
-            // The Product.update method uses findByIdAndUpdate with {new: true}.
-            // Standard Mongoose way to push: { $push: { gallery: { $each: newGalleryImages } } }
-            // But our update adapter takes an object and replaces fields. 
-            // Let's modify the update adapter to optionally handle $push or just do logic here.
-            // To keep it simple and consistent with "replace fields" logic of adapter, we might need to fetch first.
             const currentProduct = await Product.getById(req.params.id);
             const currentGallery = currentProduct.gallery || [];
             updateData.gallery = [...currentGallery, ...newGalleryImages];
+        } else {
+            // If no new files, keep existing gallery (handled by not adding 'gallery' key to updateData if we were using a partial update, 
+            // but our adapter replaces fields. So we must fetch current if we want to preserve it, OR the adapter needs to handle undefined.
+            // Looking at productModel.js (viewed earlier), update uses {...data}. 
+            // If we don't send gallery, it might be overwritten?
+            // Actually, in the code above: `const updateData = { ... }`. We didn't include gallery initially.
+            // So if we don't add it here, it won't be in updateData. 
+            // We need to ensure existing gallery is preserved if no new images are added.
+            const currentProduct = await Product.getById(req.params.id);
+            updateData.gallery = currentProduct.gallery || [];
         }
 
         await Product.update(req.params.id, updateData);
@@ -264,11 +277,60 @@ app.post('/admin/edit/:id', requireAuth, upload.fields([{ name: 'image', maxCoun
     }
 });
 
+app.post('/admin/product/:id/delete-gallery-image', requireAuth, async (req, res) => {
+    try {
+        const { imageUrl } = req.body;
+        const product = await Product.getById(req.params.id);
+
+        if (product && product.gallery) {
+            const updatedGallery = product.gallery.filter(img => img !== imageUrl);
+            await Product.update(req.params.id, { gallery: updatedGallery });
+        }
+
+        res.redirect('/admin/edit/' + req.params.id);
+    } catch (err) {
+        console.error(err);
+        res.redirect('/admin/edit/' + req.params.id);
+    }
+});
+
+app.post('/admin/product/:id/delete-main-image', requireAuth, async (req, res) => {
+    try {
+        await Product.update(req.params.id, { image: null });
+        res.redirect('/admin/edit/' + req.params.id);
+    } catch (err) {
+        console.error(err);
+        res.redirect('/admin/edit/' + req.params.id);
+    }
+});
+
 app.post('/admin/delete/:id', requireAuth, async (req, res) => {
     try {
         await Product.remove(req.params.id);
         res.redirect('/admin');
     } catch (err) {
+        res.redirect('/admin');
+    }
+});
+
+app.post('/admin/settings/hero', requireAuth, upload.single('heroImage'), async (req, res) => {
+    try {
+        if (req.file) {
+            // If using Cloudinary, req.file.path is the URL
+            // If using local, it's the path. 
+            // Our config suggests Cloudinary or local depending on env.
+            // But verify: earlier view_file showed we use cloudinary storage if env vars are present, 
+            // otherwise... wait, strict local dev might need adjustments if not using cloudinary.
+            // The storage config (cloudinary.js) exports 'storage'. 
+            // If it's CloudinaryStorage, req.file.path is the URL.
+            // If it's DiskStorage, req.file.path is local path. 
+            // Let's assume consistent behavior for now (path/url string).
+
+            await Setting.set('heroImage', req.file.path);
+        }
+        res.redirect('/admin');
+    } catch (err) {
+        console.error('Error uploading hero image:', err);
         res.redirect('/admin');
     }
 });

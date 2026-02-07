@@ -1,7 +1,7 @@
 <%- include('partials/header') %>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">
+        <h2 class="fw-bold text-black" style="color: black !important;">
             <%= t.admin.dashboard %>
         </h2>
         <a href="/admin/logout" class="btn btn-outline-danger btn-sm">
@@ -75,6 +75,39 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+
+            <!-- Site Settings Section -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white fw-bold">
+                    <%= lang==='ar' ? 'إعدادات الموقع' : 'Site Settings' %>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/settings/hero" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">
+                                <%= lang==='ar' ? 'صورة الواجهة الرئيسية' : 'Home Page Hero Image' %>
+                            </label>
+                            <% if (siteSettings && siteSettings.heroImage) { %>
+                                <div class="mb-2">
+                                    <img src="<%= siteSettings.heroImage.startsWith('http') ? siteSettings.heroImage : '/uploads/' + siteSettings.heroImage %>"
+                                        class="img-fluid rounded" style="max-height: 150px;">
+                                </div>
+                                <% } %>
+                                    <div class="input-group">
+                                        <input type="file" name="heroImage" class="form-control" accept="image/*"
+                                            required>
+                                        <button type="submit" class="btn btn-dark">
+                                            <%= lang==='ar' ? 'تحديث' : 'Update' %>
+                                        </button>
+                                    </div>
+                                    <div class="form-text text-muted small">
+                                        <%= lang==='ar' ? 'يفضل استخدام صورة عالية الدقة (1920x1080)'
+                                            : 'Recommended resolution: 1920x1080' %>
+                                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
