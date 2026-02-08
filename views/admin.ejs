@@ -84,8 +84,10 @@
                     <%= lang==='ar' ? 'إعدادات الموقع' : 'Site Settings' %>
                 </div>
                 <div class="card-body">
-                    <form action="/admin/settings/hero" method="POST" enctype="multipart/form-data">
-                        <div class="mb-3">
+                    <!-- Hero Image Form -->
+                    <form action="/admin/settings/hero" method="POST" enctype="multipart/form-data"
+                        class="mb-4 pb-4 border-bottom">
+                        <div class="mb-0">
                             <label class="form-label small fw-bold">
                                 <%= lang==='ar' ? 'صورة الواجهة الرئيسية' : 'Home Page Hero Image' %>
                             </label>
@@ -106,6 +108,26 @@
                                         <%= lang==='ar' ? 'يفضل استخدام صورة عالية الدقة (1920x1080)'
                                             : 'Recommended resolution: 1920x1080' %>
                                     </div>
+                        </div>
+                    </form>
+
+                    <!-- Reviews Toggle Form -->
+                    <form action="/admin/settings/toggle-reviews" method="POST">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <label class="fw-bold mb-0 d-block">
+                                    <%= lang==='ar' ? 'نظام التقييمات' : 'Reviews System' %>
+                                </label>
+                                <div class="form-text text-muted small">
+                                    <%= lang==='ar' ? 'إظهار أو إخفاء التقييمات من جميع المنتجات'
+                                        : 'Show or hide reviews on all product pages' %>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch fs-4">
+                                <input class="form-check-input" type="checkbox" name="showReviews" role="switch"
+                                    onchange="this.form.submit()" <%=(siteSettings && siteSettings.showReviews !==false)
+                                    ? 'checked' : '' %>>
+                            </div>
                         </div>
                     </form>
                 </div>

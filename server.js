@@ -3,11 +3,19 @@ const path = require('path');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 
+// Auth & Config
+require('dotenv').config();
+console.log(`[Startup] Server starting at ${new Date().toISOString()}`);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Auth & Config
-require('dotenv').config();
+// Request Logger
+app.use((req, res, next) => {
+    console.log(`[Request] ${req.method} ${req.url}`);
+    next();
+});
+
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
@@ -125,6 +133,22 @@ const requireAuth = (req, res, next) => {
 
 // --- PUBLIC ROUTES ---
 
+app.post('/product/:id/review', async (req, res) => {
+    try {
+        const { name, rating, comment } = req.body;
+        await Product.addReview(req.params.id, {
+            name: name || 'Customer',
+            rating: Number(rating),
+            comment,
+            date: new Date()
+        });
+        res.redirect(`/product/${req.params.id}`);
+    } catch (err) {
+        console.error(err);
+        res.redirect(`/product/${req.params.id}`);
+    }
+});
+
 app.get('/change-lang/:lang', (req, res) => {
     const newLang = req.params.lang;
     if (['ar', 'en'].includes(newLang)) {
@@ -150,6 +174,8 @@ app.get('/', async (req, res) => {
         res.render('index', { title: res.locals.t.nav.home, products: [] });
     }
 });
+
+console.log('Registering /product/:id/review route');
 
 app.get('/product/:id', async (req, res) => {
     try {
@@ -234,8 +260,13 @@ app.get('/admin/edit/:id', requireAuth, async (req, res) => {
     try {
         const product = await Product.getById(req.params.id);
         if (!product) return res.redirect('/admin');
-        res.render('edit', { title: res.locals.t.admin.form.editTitle, product });
+
+        res.render('edit', {
+            title: res.locals.t.admin.form.editTitle,
+            product: product.toObject({ virtuals: true })
+        });
     } catch (err) {
+        console.error(err);
         res.redirect('/admin');
     }
 });
@@ -297,7 +328,6 @@ app.post('/admin/product/:id/delete-gallery-image', requireAuth, async (req, res
             const updatedGallery = product.gallery.filter(img => img !== imageUrl);
             await Product.update(req.params.id, { gallery: updatedGallery });
         }
-
         res.redirect('/admin/edit/' + req.params.id);
     } catch (err) {
         console.error(err);
@@ -315,6 +345,34 @@ app.post('/admin/product/:id/delete-main-image', requireAuth, async (req, res) =
     }
 });
 
+// Review Management Routes
+app.post('/admin/product/:id/review/:reviewId/toggle', requireAuth, async (req, res) => {
+    console.log(`[Toggle] Request for Product: ${req.params.id}, Review: ${req.params.reviewId}`);
+    try {
+        const result = await Product.toggleReviewVisibility(req.params.id, req.params.reviewId);
+        console.log('[Toggle] Result:', result ? 'Success' : 'Failed (Product/Review not found)');
+        if (result) {
+            res.sendStatus(200);
+        } else {
+            res.status(404).send('Review not found');
+        }
+    } catch (err) {
+        console.error('[Toggle] Error:', err);
+        res.sendStatus(500);
+    }
+});
+
+app.post('/admin/product/:id/review/:reviewId/delete', requireAuth, async (req, res) => {
+    console.log(`[Delete Review] Request for Product: ${req.params.id}, Review: ${req.params.reviewId}`);
+    try {
+        await Product.deleteReview(req.params.id, req.params.reviewId);
+        res.sendStatus(200);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
+});
+
 app.post('/admin/delete/:id', requireAuth, async (req, res) => {
     try {
         await Product.remove(req.params.id);
@@ -327,21 +385,22 @@ app.post('/admin/delete/:id', requireAuth, async (req, res) => {
 app.post('/admin/settings/hero', requireAuth, upload.single('heroImage'), async (req, res) => {
     try {
         if (req.file) {
-            // If using Cloudinary, req.file.path is the URL
-            // If using local, it's the path. 
-            // Our config suggests Cloudinary or local depending on env.
-            // But verify: earlier view_file showed we use cloudinary storage if env vars are present, 
-            // otherwise... wait, strict local dev might need adjustments if not using cloudinary.
-            // The storage config (cloudinary.js) exports 'storage'. 
-            // If it's CloudinaryStorage, req.file.path is the URL.
-            // If it's DiskStorage, req.file.path is local path. 
-            // Let's assume consistent behavior for now (path/url string).
-
             await Setting.set('heroImage', req.file.path);
         }
         res.redirect('/admin');
     } catch (err) {
         console.error('Error uploading hero image:', err);
+        res.redirect('/admin');
+    }
+});
+
+app.post('/admin/settings/toggle-reviews', requireAuth, async (req, res) => {
+    try {
+        const showReviews = req.body.showReviews === 'on';
+        await Setting.set('showReviews', showReviews);
+        res.redirect('/admin');
+    } catch (err) {
+        console.error('Error toggling reviews setting:', err);
         res.redirect('/admin');
     }
 });

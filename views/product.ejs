@@ -153,4 +153,124 @@
         </div>
     </div>
 
-    <%- include('partials/footer') %>
+    <!-- Reviews Section -->
+    <% if (siteSettings && siteSettings.showReviews !==false) { %>
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h3 class="fw-bold mb-0">
+                            <%= (t.product.reviews && t.product.reviews.title) ? t.product.reviews.title
+                                : 'Customer Reviews' %>
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <% /* Initialize translation defaults with hardcoded Arabic as fallback to be safe */ var tr={
+                            title: 'آراء العملاء' , noReviews: 'لا توجد آراء بعد. كن أول من يقيم هذا المنتج!' ,
+                            addReview: 'أضف تقييمك' , name: 'الاسم (اختياري)' , namePlaceholder: 'مثلاً: عبدالله محمد' ,
+                            rating: 'التقييم' , comment: 'التجربة' , submit: 'إرسال التقييم' , average: 'التقييم العام'
+                            }; if (t && t.product && t.product.reviews) { Object.assign(tr, t.product.reviews); } /*
+                            Filter visible reviews */ var reviewsList=product.reviews ? product.reviews : []; var
+                            visibleReviews=reviewsList.filter(function(r) { return !r.hidden; }); /* Calculate Average
+                            Rating */ var avgRating=0; if (visibleReviews.length> 0) {
+                            var total = visibleReviews.reduce(function(acc, r) { return acc + r.rating; }, 0);
+                            avgRating = (total / visibleReviews.length).toFixed(1);
+                            }
+                            %>
+
+                            <% if (visibleReviews.length> 0) { %>
+                                <div class="mb-4 d-flex align-items-center gap-3">
+                                    <h2 class="display-4 fw-bold text-warning mb-0">
+                                        <%= avgRating %>
+                                    </h2>
+                                    <div>
+                                        <div class="text-warning fs-4">
+                                            <% for(let i=0; i<Math.round(avgRating); i++) { %>★<% } %>
+                                                    <% for(let i=Math.round(avgRating); i<5; i++) { %>☆<% } %>
+                                        </div>
+                                        <span class="text-muted">
+                                            <%= visibleReviews.length %> reviews
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="list-group mb-5">
+                                    <% visibleReviews.forEach(review=> { %>
+                                        <div class="list-group-item">
+                                            <div class="d-flex justify-content-between">
+                                                <h6 class="fw-bold">
+                                                    <%= review.name %>
+                                                </h6>
+                                                <small class="text-muted">
+                                                    <%= review.date ? new Date(review.date).toLocaleDateString() : '' %>
+                                                </small>
+                                            </div>
+                                            <div class="text-warning mb-2">
+                                                <% for(let i=1; i<=5; i++) { %>
+                                                    <span
+                                                        class="review-star <%= i <= review.rating ? '' : 'empty' %>">★</span>
+                                                    <% } %>
+                                            </div>
+                                            <p class="mb-1">
+                                                <%= review.comment %>
+                                            </p>
+                                        </div>
+                                        <% }) %>
+                                </div>
+                                <% } else { %>
+                                    <p class="text-muted mb-5">
+                                        <%= tr.noReviews %>
+                                    </p>
+                                    <% } %>
+
+                                        <!-- Add Review Form -->
+                                        <div class="card bg-light border-0">
+                                            <div class="card-body">
+                                                <h5 class="fw-bold mb-3">
+                                                    <%= tr.addReview %>
+                                                </h5>
+                                                <form action="/product/<%= product.id %>/review" method="POST">
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-bold">
+                                                            <%= tr.rating %>
+                                                        </label>
+                                                        <div class="star-rating">
+                                                            <input type="radio" id="star5" name="rating" value="5"
+                                                                required /><label for="star5">★</label>
+                                                            <input type="radio" id="star4" name="rating"
+                                                                value="4" /><label for="star4">★</label>
+                                                            <input type="radio" id="star3" name="rating"
+                                                                value="3" /><label for="star3">★</label>
+                                                            <input type="radio" id="star2" name="rating"
+                                                                value="2" /><label for="star2">★</label>
+                                                            <input type="radio" id="star1" name="rating"
+                                                                value="1" /><label for="star1">★</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-bold">
+                                                            <%= tr.name %>
+                                                        </label>
+                                                        <input type="text" name="name" class="form-control"
+                                                            placeholder="<%= tr.namePlaceholder %>">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-bold">
+                                                            <%= tr.comment %>
+                                                        </label>
+                                                        <textarea name="comment" class="form-control" rows="3"
+                                                            required></textarea>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-dark">
+                                                        <%= tr.submit %>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+            <%- include('partials/footer') %>

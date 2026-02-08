@@ -1,5 +1,30 @@
 const mongoose = require('mongoose');
 
+const reviewSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    rating: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 5
+    },
+    comment: {
+        type: String,
+        required: true
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    },
+    hidden: {
+        type: Boolean,
+        default: false
+    }
+});
+
 const productSchema = new mongoose.Schema({
     _id: {
         type: String, // We'll use the existing UUIDs
@@ -36,7 +61,8 @@ const productSchema = new mongoose.Schema({
     video: {
         type: String, // YouTube URL
         required: false
-    }
+    },
+    reviews: [reviewSchema]
 }, {
     timestamps: true,
     _id: false // Disable auto-generation since we provide UUID

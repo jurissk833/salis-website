@@ -387,3 +387,46 @@ a {
         transform: translateX(-50%) translateY(-5px);
     }
 }
+
+/* Star Rating System */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+.star-rating input {
+    display: none !important;
+}
+
+.star-rating label {
+    font-size: 2.5rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    line-height: 1;
+}
+
+/* Color stars on hover and when checked */
+.star-rating label:hover,
+.star-rating label:hover~label,
+.star-rating input:checked~label {
+    color: #D4AF37;
+    /* Gold */
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+.star-rating label:active {
+    transform: scale(0.9);
+}
+
+/* Review card stars */
+.review-star {
+    color: #D4AF37;
+    font-size: 1.1rem;
+}
+
+.review-star.empty {
+    color: #ddd;
+}

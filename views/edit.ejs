@@ -13,6 +13,8 @@
                 </div>
                 <div class="card-body">
                     <form action="/admin/edit/<%= product.id %>" method="POST" enctype="multipart/form-data">
+
+                        <!-- 1. Product Information -->
                         <div class="mb-3">
                             <label class="form-label small fw-bold">
                                 <%= t.admin.form.title %>
@@ -64,10 +66,7 @@
                             <label class="form-label small fw-bold d-block">
                                 <%= t.admin.form.image %>
                             </label>
-
-                            <!-- Hidden input to track if main image should be deleted -->
                             <input type="hidden" name="deleteMainImage" id="deleteMainImageInput" value="false">
-
                             <% if (product.image) { %>
                                 <div class="mb-2 position-relative" style="display: inline-block;"
                                     id="mainImageContainer">
@@ -89,7 +88,7 @@
                                 <% } %>
                                     <input type="file" name="image" class="form-control" accept="image/*">
                                     <div class="form-text text-muted small">
-                                        <%= lang==='ar' ? 'اتركه فارغاً للاحتفاظ بالصورة الحالية'
+                                        <%= lang==='ar' ? 'اترك فارغاً للاحتفاظ بالصورة الحالية'
                                             : 'Leave empty to keep current image' %>
                                     </div>
                         </div>
@@ -98,9 +97,7 @@
                             <label class="form-label small fw-bold d-block">
                                 <%= lang==='ar' ? 'صور المعرض' : 'Gallery Images' %>
                             </label>
-                            <!-- Container for hidden inputs of deleted gallery images -->
                             <div id="deletedGalleryImagesContainer"></div>
-
                             <% if (product.gallery && product.gallery.length> 0) { %>
                                 <div class="d-flex flex-wrap gap-2 mb-2">
                                     <% product.gallery.forEach((img, index)=> { %>
@@ -119,13 +116,10 @@
                                 </div>
                                 <script>
                                     function markGalleryImageForDeletion(imageUrl, index) {
-                                        // Hide the image
                                         document.getElementById('gallery-img-' + index).style.display = 'none';
-
-                                        // Create a hidden input to send this image URL for deletion
                                         const input = document.createElement('input');
                                         input.type = 'hidden';
-                                        input.name = 'deletedGalleryImages'; // Use same name to create an array on backend
+                                        input.name = 'deletedGalleryImages';
                                         input.value = imageUrl;
                                         document.getElementById('deletedGalleryImagesContainer').appendChild(input);
                                     }
@@ -133,18 +127,142 @@
                                 <% } %>
                                     <input type="file" name="gallery" class="form-control" accept="image/*" multiple>
                                     <div class="form-text text-muted small">
-                                        <%= lang==='ar' ? 'تحميل صور إضافية للمعرض'
-                                            : 'Upload additional images to gallery' %>
+                                        <%= lang==='ar' ? 'تحميل صور إضافية للمعرض' : 'Upload additional gallery images'
+                                            %>
                                     </div>
                         </div>
 
-                        <button type="submit" class="btn btn-dark w-100">
-                            <%= t.admin.form.update %>
-                        </button>
+                        <hr class="my-4">
+
+                        <!-- 2. Review Management -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold border-bottom pb-2 d-block">
+                                <%= t.admin.form.customerReviews %>
+                            </label>
+                            <% if (product.reviews && product.reviews.length> 0) { %>
+                                <div class="list-group">
+                                    <% product.reviews.forEach(review=> { %>
+                                        <div class="list-group-item <%= review.hidden ? 'bg-light text-muted' : '' %>">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div>
+                                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                        <strong>
+                                                            <%= review.name || 'Customer' %>
+                                                        </strong>
+                                                        <span class="badge bg-warning text-dark">
+                                                            <%= review.rating %> ★
+                                                        </span>
+                                                        <% if (review.hidden) { %>
+                                                            <span class="badge bg-secondary">
+                                                                <%= t.admin.form.hidden %>
+                                                            </span>
+                                                            <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex gap-1">
+                                                    <button type="button"
+                                                        onclick="toggleReview('<%= product.id %>', '<%= review.id || review._id %>')"
+                                                        class="btn btn-sm btn-outline-<%= review.hidden ? 'success' : 'secondary' %> py-0"
+                                                        style="font-size: 0.8rem;">
+                                                        <%= review.hidden ? t.admin.form.show : t.admin.form.hide %>
+                                                    </button>
+                                                    <button type="button"
+                                                        onclick="deleteReview('<%= product.id %>', '<%= review.id || review._id %>')"
+                                                        class="btn btn-sm btn-outline-danger py-0"
+                                                        style="font-size: 0.8rem;">
+                                                        <%= t.admin.form.deleteReview %>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <p class="mb-1 small text-break">
+                                                <%= review.comment %>
+                                            </p>
+                                            <div class="text-start">
+                                                <small class="text-muted" style="font-size: 0.7rem;">
+                                                    <%= review.date ? new Date(review.date).toLocaleDateString() : '' %>
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <% }) %>
+                                </div>
+                                <% } else { %>
+                                    <p class="text-muted">
+                                        <%= t.product.reviews.noReviews %>
+                                    </p>
+                                    <% } %>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- 3. Action Buttons (At Bottom) -->
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" class="btn btn-dark btn-lg">
+                                <%= t.admin.form.update %>
+                            </button>
+                            <a href="/admin" class="btn btn-outline-secondary">
+                                <%= t.admin.form.cancel %>
+                            </a>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    </div>
+
+    <script>
+        async function deleteImage(filename) {
+            if (confirm('<%= t.admin.confirmDelete %>')) {
+                try {
+                    const response = await fetch(`/admin/product/image/${filename}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Failed to delete image');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Error deleting image');
+                }
+            }
+        }
+
+        async function toggleReview(productId, reviewId) {
+            try {
+                const response = await fetch(`/admin/product/${productId}/review/${reviewId}/toggle`, {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    const text = await response.text();
+                    alert('Failed to toggle review visibility: ' + response.status + ' - ' + text);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error toggling review');
+            }
+        }
+
+        async function deleteReview(productId, reviewId) {
+            if (confirm('<%= t.admin.form.confirmDeleteReview %>')) {
+                try {
+                    const response = await fetch(`/admin/product/${productId}/review/${reviewId}/delete`, {
+                        method: 'POST'
+                    });
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Failed to delete review');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Error deleting review');
+                }
+            }
+        }
+    </script>
 
     <%- include('partials/footer') %>

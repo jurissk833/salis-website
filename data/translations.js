@@ -1,3 +1,4 @@
+// Translations
 module.exports = {
     ar: {
         dir: 'rtl',
@@ -13,7 +14,7 @@ module.exports = {
         },
         footer: {
             copyright: 'سلِس. جميع الحقوق محفوظة.',
-            downloadApp: 'حمل تطبيق سلس',
+            downloadApp: 'حمل تطبيق سلِس',
             installApp: 'تثبيت تطبيق سلس',
             installAppDesc: 'احصل على أفضل تجربة مع تطبيقنا',
             installIOS: 'تثبيت تطبيق سلس على الآيفون',
@@ -41,7 +42,18 @@ module.exports = {
             warrantyTitle: 'الضمان',
             defaultWarranty: 'ضمان قياسي',
             whatsappButton: 'اطلب عبر واتساب',
-            whatsappMessage: 'السلام عليكم ،، ✋🏼\nأرغب بطلب المنتج:\n{{title}} 🔐'
+            whatsappMessage: 'السلام عليكم ،، ✋🏼\nأرغب بطلب المنتج:\n{{title}} 🔐',
+            reviews: {
+                title: 'آراء العملاء',
+                noReviews: 'لا توجد آراء بعد. كن أول من يقيم هذا المنتج!',
+                addReview: 'أضف تقييمك',
+                name: 'الاسم (اختياري)',
+                namePlaceholder: 'مثلاً: عبدالله محمد',
+                rating: 'التقييم',
+                comment: 'التجربة',
+                submit: 'إرسال التقييم',
+                average: 'التقييم العام'
+            }
         },
         login: {
             title: 'دخول الأدمن',
@@ -74,7 +86,13 @@ module.exports = {
                 submit: 'إضافة المنتج',
                 update: 'تحديث المنتج',
                 editTitle: 'تعديل المنتج',
-                cancel: 'إلغاء'
+                cancel: 'إلغاء',
+                customerReviews: 'آراء العملاء',
+                hide: 'إخفاء',
+                show: 'إظهار',
+                hidden: 'محجوب',
+                deleteReview: 'حذف التقييم',
+                confirmDeleteReview: 'هل أنت متأكد من حذف هذا التقييم؟ لا يمكن التراجع عن هذا الإجراء.'
             },
             edit: 'تعديل'
         }
@@ -121,7 +139,18 @@ module.exports = {
             warrantyTitle: 'Warranty',
             defaultWarranty: 'Standard Warranty Applies',
             whatsappButton: 'Order via WhatsApp',
-            whatsappMessage: 'Hello, I am interested in ordering the model:\n{{title}} 🔐'
+            whatsappMessage: 'Hello, I am interested in ordering the model:\n{{title}} 🔐',
+            reviews: {
+                title: 'Customer Reviews',
+                noReviews: 'No reviews yet. Be the first to rate this product!',
+                addReview: 'Add Your Review',
+                name: 'Name (Optional)',
+                namePlaceholder: 'e.g. John Doe',
+                rating: 'Rating',
+                comment: 'Share your experience',
+                submit: 'Submit Review',
+                average: 'Average Rating'
+            }
         },
         login: {
             title: 'Admin Access',
@@ -146,15 +175,24 @@ module.exports = {
                 title: 'Title',
                 price: 'Price (SAR)',
                 description: 'Description',
-                features: 'Features (One per line)',
-                featuresPlaceholder: 'Fingerprint Unlock\nMobile App',
+                features: 'Features (one per line)',
+                featuresPlaceholder: 'Fingerprint Unlock\nMobile App Control',
                 warranty: 'Warranty Info',
                 warrantyPlaceholder: 'e.g. 2 Years',
                 image: 'Product Image',
+                heroImage: 'Hero Image',
+                enableReviews: 'Enable Reviews System',
+                reviewsVisibilityDesc: 'Hide or show the reviews section on all product pages',
                 submit: 'Add Product',
                 update: 'Update Product',
                 editTitle: 'Edit Product',
-                cancel: 'Cancel'
+                cancel: 'Cancel',
+                customerReviews: 'Customer Reviews',
+                hide: 'Hide',
+                show: 'Show',
+                hidden: 'Hidden',
+                deleteReview: 'Delete Review',
+                confirmDeleteReview: 'Are you sure you want to delete this review? This cannot be undone.'
             },
             edit: 'Edit'
         }
