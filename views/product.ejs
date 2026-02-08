@@ -3,11 +3,12 @@
     <div class="row align-items-center py-5">
         <!-- Product Image -->
         <div class="col-md-6 mb-4 mb-md-0">
-            <div class="mb-3">
+            <div class="mb-3 d-flex align-items-center justify-content-center bg-light rounded shadow-sm"
+                style="height: 500px; overflow: hidden;">
                 <img id="mainImage"
                     src="<%= product.image ? (product.image.startsWith('http') ? product.image : '/uploads/' + product.image) : 'https://placehold.co/600x600?text=No+Image' %>"
-                    class="img-fluid rounded shadow-lg w-100" alt="<%= product.title %>"
-                    style="max-height: 500px; object-fit: contain; background: #f8f9fa;">
+                    class="img-fluid" alt="<%= product.title %>"
+                    style="max-height: 100%; max-width: 100%; object-fit: contain;">
             </div>
             <% if (product.gallery && product.gallery.length> 0) { %>
                 <div class="d-flex gap-2 overflow-auto py-2">
