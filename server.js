@@ -228,7 +228,11 @@ app.get('/admin', requireAuth, async (req, res) => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     try {
         const products = await Product.getAll();
-        res.render('admin', { title: res.locals.t.nav.dashboard, products });
+        res.render('admin', {
+            title: res.locals.t.nav.dashboard,
+            products,
+            query: req.query // Pass query params to view for debug/error display
+        });
     } catch (err) {
         res.redirect('/');
     }
@@ -412,7 +416,7 @@ app.post('/admin/settings/toggle-reviews', requireAuth, async (req, res) => {
         res.redirect('/admin?updated=' + Date.now() + '&reviews_status=' + showReviews);
     } catch (err) {
         console.error('Error toggling reviews setting:', err);
-        res.redirect('/admin');
+        res.redirect('/admin?error=' + encodeURIComponent(err.message));
     }
 });
 
