@@ -97,6 +97,9 @@ const localeMiddleware = async (req, res, next) => {
     res.locals.t = translations[lang];
     res.locals.dir = translations[lang].dir;
 
+    // Debug translations
+    // console.log(`[Debug] Lang: ${lang}, Footer Keys:`, Object.keys(res.locals.t.footer));
+
     // Load Site Settings
     try {
         res.locals.siteSettings = await Setting.getAll();
@@ -238,7 +241,7 @@ app.get('/admin/edit/:id', requireAuth, async (req, res) => {
 
 app.post('/admin/edit/:id', requireAuth, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'gallery', maxCount: 10 }]), async (req, res) => {
     try {
-        const { title, description, price, features, warranty } = req.body;
+        const { title, description, price, features, warranty, deleteMainImage, deletedGalleryImages } = req.body;
         const updateData = {
             title,
             description,
@@ -247,27 +250,33 @@ app.post('/admin/edit/:id', requireAuth, upload.fields([{ name: 'image', maxCoun
             warranty
         };
 
+        // Handle Main Image
         if (req.files && req.files['image']) {
+            // New image uploaded, replaces old one
             updateData.image = req.files['image'][0].path;
+        } else if (deleteMainImage === 'true') {
+            // No new image, but marked for deletion
+            updateData.image = null;
         }
 
-        // Handle gallery images - append to existing
+        // Handle Gallery Images
+        const currentProduct = await Product.getById(req.params.id);
+        const currentGallery = currentProduct.gallery || [];
+        let updatedGallery = [...currentGallery];
+
+        // Process deferred gallery deletions
+        if (deletedGalleryImages) {
+            const imagesToDelete = Array.isArray(deletedGalleryImages) ? deletedGalleryImages : [deletedGalleryImages];
+            updatedGallery = updatedGallery.filter(img => !imagesToDelete.includes(img));
+        }
+
+        // Add new gallery images
         if (req.files && req.files['gallery']) {
             const newGalleryImages = req.files['gallery'].map(file => file.path);
-            const currentProduct = await Product.getById(req.params.id);
-            const currentGallery = currentProduct.gallery || [];
-            updateData.gallery = [...currentGallery, ...newGalleryImages];
-        } else {
-            // If no new files, keep existing gallery (handled by not adding 'gallery' key to updateData if we were using a partial update, 
-            // but our adapter replaces fields. So we must fetch current if we want to preserve it, OR the adapter needs to handle undefined.
-            // Looking at productModel.js (viewed earlier), update uses {...data}. 
-            // If we don't send gallery, it might be overwritten?
-            // Actually, in the code above: `const updateData = { ... }`. We didn't include gallery initially.
-            // So if we don't add it here, it won't be in updateData. 
-            // We need to ensure existing gallery is preserved if no new images are added.
-            const currentProduct = await Product.getById(req.params.id);
-            updateData.gallery = currentProduct.gallery || [];
+            updatedGallery = [...updatedGallery, ...newGalleryImages];
         }
+
+        updateData.gallery = updatedGallery;
 
         await Product.update(req.params.id, updateData);
         res.redirect('/admin');

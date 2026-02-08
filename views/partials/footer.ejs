@@ -1,14 +1,94 @@
 </main>
 
-<footer class="bg-dark text-white text-center py-3 mt-auto">
+<footer class="bg-dark text-white text-center py-4 mt-auto">
     <div class="container">
+
+        <!-- Download App Section -->
+        <div class="mb-4">
+            <h5 class="mb-3 text-gold" style="font-weight: 600;">
+                <%= t.footer.downloadApp %>
+            </h5>
+            <div class="d-flex justify-content-center gap-3">
+                <!-- Android Button -->
+                <button id="footer-install-android"
+                    class="btn btn-outline-light d-flex align-items-center gap-2 px-3 py-2 rounded-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                        class="bi bi-android2" viewBox="0 0 16 16">
+                        <path
+                            d="M13.957 13.116c.344 0 .584-.25.584-.574 0-.312-.229-.481-.531-.481.551-1.637.893-3.619.957-5.964h-1.517c-.063 2.05-.386 3.826-.879 5.385a.557.557 0 0 1-.035.03c-.15.11-.341.178-.516.178-.375.023-.625-.219-.625-.578 0-.344.25-.579.578-.579.16 0 .309.063.43.164.386-1.39.648-2.95.73-4.605h-1.28a13.315 13.315 0 0 0-.254-2.822l1.64-1.64a.55.55 0 0 0-.777-.777l-1.745 1.745c-1.353-.414-2.909-.648-4.576-.648-1.666 0-3.223.234-4.576.648L3.102.586a.55.55 0 0 0-.777.777l1.64 1.64a13.315 13.315 0 0 0-.255 2.822H2.43c.083 1.652.344 3.211.731 4.604a.526.526 0 0 1 .43-.163c.328 0 .578.234.578.578 0 .36-.25.602-.625.579a.575.575 0 0 1-.516-.179.626.626 0 0 1-.034-.03c-.493-1.56-.816-3.336-.88-5.385H.61c.064 2.345.406 4.327.957 5.964-.302 0-.531.17-.531.481 0 .324.24.574.584.574.239 0 .43-.122.516-.27.469 1.157 1.164 2.196 2.029 3.036.052.261.276.453.547.453a.557.557 0 0 0 .558-.558c0-.258-.184-.469-.434-.531a8.6 8.6 0 0 1-1.664-2.48c.191-.122.36-.27.48-.442.27.442.579.86.919 1.25.04.266.27.465.55.465a.557.557 0 0 0 .559-.559c0-.261-.192-.472-.442-.534a9.7 9.7 0 0 1-.786-1.075c.18-.081.332-.206.438-.359.738.648 1.574 1.172 2.476 1.547.043.273.277.476.563.476a.558.558 0 0 0 .558-.559c0-.265-.195-.48-.453-.539a11.036 11.036 0 0 1-2.227-1.395c.145-.14.243-.332.243-.547 0-.414-.336-.75-.75-.75-.414 0-.75.336-.75.75 0 .207.089.395.226.535a11.968 11.968 0 0 1 2.274 1.254c.144-.09.316-.145.5-.145.414 0 .75.336.75.75 0 .235-.11.442-.278.582 1.09-.344 2.079-.887 2.946-1.578a.637.637 0 0 1 .433.355c-.105.153-.257.278-.437.359-.27.375-.55.727-.84 1.055-.226.059-.398.261-.398.503 0 .309.25.559.558.559.27 0 .493-.188.547-.438.352-.41.672-.847.961-1.304.114.156.282.289.469.406a8.88 8.88 0 0 1-1.746 2.508c-.243.062-.422.281-.422.539 0 .308.25.558.559.558.261 0 .48-.18.535-.429.914-.872 1.636-1.962 2.105-3.177.086.152.286.277.536.277z" />
+                    </svg>
+                    <span>Android</span>
+                </button>
+
+                <!-- iOS Button -->
+                <button id="footer-install-ios"
+                    class="btn btn-outline-light d-flex align-items-center gap-2 px-3 py-2 rounded-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                        class="bi bi-apple" viewBox="0 0 16 16">
+                        <path
+                            d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516.024.034 1.52.087 2.475-1.258.955-1.345.762-2.391.728-2.43Zm3.314 11.733c-.048-.096-2.325-1.234-2.113-3.422.212-2.189 1.675-2.789 1.698-2.854.023-.065-.597-.79-1.254-1.157a3.692 3.692 0 0 0-1.563-.434c-.108-.003-.483-.095-1.254.116-.508.139-1.653.589-1.968.607-.316.018-1.256-.522-2.267-.665-.647-.125-1.333.131-1.824.328-.49.196-1.422.754-2.074 2.237-.652 1.482-.311 3.83-.067 4.56.244.729.625 1.924 1.273 2.796.576.984 1.34 1.667 1.659 1.899.319.232 1.219.386 1.843.067.502-.308 1.408-.485 1.766-.472.357.013 1.061.154 1.782.539.571.197 1.111.115 1.652-.105.541-.221 1.324-1.059 2.238-2.758.347-.79.505-1.217.473-1.282Z" />
+                        <path
+                            d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516.024.034 1.52.087 2.475-1.258.955-1.345.762-2.391.728-2.43Zm3.314 11.733c-.048-.096-2.325-1.234-2.113-3.422.212-2.189 1.675-2.789 1.698-2.854.023-.065-.597-.79-1.254-1.157a3.692 3.692 0 0 0-1.563-.434c-.108-.003-.483-.095-1.254.116-.508.139-1.653.589-1.968.607-.316.018-1.256-.522-2.267-.665-.647-.125-1.333.131-1.824.328-.49.196-1.422.754-2.074 2.237-.652 1.482-.311 3.83-.067 4.56.244.729.625 1.924 1.273 2.796.576.984 1.34 1.667 1.659 1.899.319.232 1.219.386 1.843.067.502-.308 1.408-.485 1.766-.472.357.013 1.061.154 1.782.539.571.197 1.111.115 1.652-.105.541-.221 1.324-1.059 2.238-2.758.347-.79.505-1.217.473-1.282Z" />
+                    </svg>
+                    <span>iPhone</span>
+                </button>
+            </div>
+        </div>
+
         <small>&copy; <%= new Date().getFullYear() %>
                 <%= t.footer.copyright %></small>
     </div>
 </footer>
 
+<!-- Install Prompts -->
+
+<!-- Android / Desktop Install Prompt -->
+<div id="android-install-prompt" class="install-prompt-banner">
+    <div class="install-prompt-content">
+        <img src="/images/icon-192x192.png" alt="Salis App" class="install-prompt-icon">
+        <div class="install-prompt-text">
+            <h5>
+                <%= t.footer.installApp || 'Install Salis App' %>
+            </h5>
+            <p>
+                <%= t.footer.installAppDesc || 'Get the best experience with our native app.' %>
+            </p>
+        </div>
+    </div>
+    <div class="install-prompt-actions">
+        <button class="btn-dismiss install-prompt-close">
+            <%= t.footer.notNow %>
+        </button>
+        <button id="native-install-btn" class="btn-install-native">
+            <%= t.footer.install %>
+        </button>
+    </div>
+</div>
+
+<!-- iOS Install Prompt -->
+<div id="ios-install-prompt" class="install-prompt-banner">
+    <div class="install-prompt-content">
+        <img src="/images/icon-192x192.png" alt="Salis App" class="install-prompt-icon">
+        <div class="install-prompt-text">
+            <h5>
+                <%= t.footer.installIOS || 'Install Salis for iOS' %>
+            </h5>
+            <p><%- t.footer.installIOSDesc || 'Tap Share and Add to Home Screen' %></p>
+        </div>
+    </div>
+    <div class="install-prompt-actions">
+        <button class="btn-dismiss install-prompt-close">
+            <%= t.footer.close %>
+        </button>
+    </div>
+    <div class="ios-instruction-arrow"></div>
+</div>
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- PWA Install Logic -->
+<script src="/js/install-prompt.js"></script>
 
 <!-- Service Worker -->
 <script>

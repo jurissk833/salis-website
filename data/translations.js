@@ -12,7 +12,15 @@ module.exports = {
             login: 'دخول الأدمن'
         },
         footer: {
-            copyright: 'سلِس. جميع الحقوق محفوظة.'
+            copyright: 'سلِس. جميع الحقوق محفوظة.',
+            downloadApp: 'حمل تطبيق سلس',
+            installApp: 'تثبيت تطبيق سلس',
+            installAppDesc: 'احصل على أفضل تجربة مع تطبيقنا',
+            installIOS: 'تثبيت تطبيق سلس على الآيفون',
+            installIOSDesc: 'اضغط على أيقونة <strong>المشاركة</strong> <span style="font-size: 1.2rem;">&#9634;</span> بالأسفل واختر <strong>إضافة إلى الصفحة الرئيسية</strong> <span style="font-size: 1.2rem;">&#8853;</span>',
+            notNow: 'ليس الآن',
+            close: 'إغلاق',
+            install: 'تثبيت'
         },
         index: {
             hero: {
@@ -84,7 +92,15 @@ module.exports = {
             login: 'Admin Login'
         },
         footer: {
-            copyright: 'Salis. All Rights Reserved.'
+            copyright: 'Salis. All Rights Reserved.',
+            downloadApp: 'Download Salis App',
+            installApp: 'Install SALIS App',
+            installAppDesc: 'Get the best experience with our native app.',
+            installIOS: 'Install SALIS for iOS',
+            installIOSDesc: 'Tap the <strong>Share</strong> icon below <span style="font-size: 1.2rem;">&#9634;</span> and select <strong>Add to Home Screen</strong> <span style="font-size: 1.2rem;">&#8853;</span>',
+            notNow: 'Not Now',
+            close: 'Close',
+            install: 'Install App'
         },
         index: {
             hero: {

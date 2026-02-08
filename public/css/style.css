@@ -216,11 +216,13 @@ a {
     }
 
     h1 {
-        font-size: 2.2rem; /* Smaller heading for mobile */
+        font-size: 2.2rem;
+        /* Smaller heading for mobile */
     }
 
     .display-3 {
-        font-size: 2.5rem; /* Bootstrap display adjustments */
+        font-size: 2.5rem;
+        /* Bootstrap display adjustments */
     }
 
     .display-4 {
@@ -228,11 +230,13 @@ a {
     }
 
     .navbar-brand img {
-        height: 35px; /* Smaller logo on mobile */
+        height: 35px;
+        /* Smaller logo on mobile */
     }
 
     .hero-section {
-        min-height: 60vh !important; /* Reduce hero height on mobile */
+        min-height: 60vh !important;
+        /* Reduce hero height on mobile */
     }
 
     .card-product {
@@ -257,9 +261,129 @@ a {
 /* Smooth scrolling for touch devices */
 .overflow-auto {
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 .overflow-auto::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+    display: none;
+    /* Chrome/Safari */
+}
+
+/* --- PWA Install Prompts --- */
+.install-prompt-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--accent-gold);
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 9999;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    display: none !important;
+    /* Hidden by default */
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.install-prompt-banner.active {
+    display: block !important;
+    animation: slideUp 0.5s ease forwards;
+}
+
+.install-prompt-banner.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.install-prompt-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.install-prompt-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.install-prompt-text h5 {
+    color: var(--accent-gold);
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+}
+
+.install-prompt-text p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.install-prompt-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-install-native {
+    background: var(--accent-gold);
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.btn-dismiss {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+/* iOS Specific */
+.ios-instruction-arrow {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid var(--accent-gold);
+    animation: bounce arrow 2s infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    40% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+
+    60% {
+        transform: translateX(-50%) translateY(-5px);
+    }
 }
