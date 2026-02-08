@@ -397,6 +397,7 @@ app.post('/admin/settings/hero', requireAuth, upload.single('heroImage'), async 
 app.post('/admin/settings/toggle-reviews', requireAuth, async (req, res) => {
     try {
         const showReviews = req.body.showReviews === 'on';
+        console.log(`[Settings] Toggle Reviews: ${showReviews}`);
         await Setting.set('showReviews', showReviews);
         res.redirect('/admin');
     } catch (err) {
