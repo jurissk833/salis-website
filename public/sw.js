@@ -1,4 +1,4 @@
-const CACHE_NAME = 'salis-static-v3';
+const CACHE_NAME = 'salis-static-v5';
 const ASSETS = [
     '/',
     '/css/style.css',
@@ -34,6 +34,11 @@ self.addEventListener('fetch', (evt) => {
     // Skip non-GET requests
     if (evt.request.method !== 'GET') return;
 
+    // Don't cache admin pages
+    if (evt.request.url.includes('/admin')) {
+        return; // Let the browser handle it normally (network only)
+    }
+
     // Strategy: Network-First for HTML pages (to handle language changes/updates)
     if (evt.request.mode === 'navigate') {
         evt.respondWith(
@@ -48,7 +53,6 @@ self.addEventListener('fetch', (evt) => {
                     // Fallback to cache if offline
                     return caches.match(evt.request).then(cacheRes => {
                         if (cacheRes) return cacheRes;
-                        // Optional: Return a generic offline.html here
                     });
                 })
         );
