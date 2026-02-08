@@ -17,7 +17,7 @@ module.exports = {
             installApp: 'تثبيت تطبيق سلس',
             installAppDesc: 'احصل على أفضل تجربة مع تطبيقنا',
             installIOS: 'تثبيت تطبيق سلس على الآيفون',
-            installIOSDesc: 'اضغط على أيقونة <strong>المشاركة</strong> <span style="font-size: 1.2rem;">&#9634;</span> بالأسفل واختر <strong>إضافة إلى الصفحة الرئيسية</strong> <span style="font-size: 1.2rem;">&#8853;</span>',
+            installIOSDesc: 'اضغط على أيقونة <strong>المشاركة</strong> <img src="/images/ios-share.png" alt="مشاركة" style="width: 20px; height: 20px; vertical-align: middle; margin: 0 4px;"> بالأسفل واختر <strong>إضافة إلى الصفحة الرئيسية</strong> <img src="/images/ios-add.png" alt="إضافة" style="width: 20px; height: 20px; vertical-align: middle; margin: 0 4px;">',
             notNow: 'ليس الآن',
             close: 'إغلاق',
             install: 'تثبيت'
@@ -97,7 +97,7 @@ module.exports = {
             installApp: 'Install SALIS App',
             installAppDesc: 'Get the best experience with our native app.',
             installIOS: 'Install SALIS for iOS',
-            installIOSDesc: 'Tap the <strong>Share</strong> icon below <span style="font-size: 1.2rem;">&#9634;</span> and select <strong>Add to Home Screen</strong> <span style="font-size: 1.2rem;">&#8853;</span>',
+            installIOSDesc: 'Tap the <strong>Share</strong> icon below <img src="/images/ios-share.png" alt="Share" style="width: 20px; height: 20px; vertical-align: middle; margin: 0 4px;"> and select <strong>Add to Home Screen</strong> <img src="/images/ios-add.png" alt="Add" style="width: 20px; height: 20px; vertical-align: middle; margin: 0 4px;">',
             notNow: 'Not Now',
             close: 'Close',
             install: 'Install App'
