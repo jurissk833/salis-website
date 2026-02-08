@@ -216,6 +216,7 @@ app.get('/admin/logout', (req, res) => {
 // --- ADMIN ROUTES ---
 
 app.get('/admin', requireAuth, async (req, res) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     try {
         const products = await Product.getAll();
         res.render('admin', { title: res.locals.t.nav.dashboard, products });
@@ -396,10 +397,10 @@ app.post('/admin/settings/hero', requireAuth, upload.single('heroImage'), async 
 
 app.post('/admin/settings/toggle-reviews', requireAuth, async (req, res) => {
     try {
-        const showReviews = req.body.showReviews === 'on';
+        const showReviews = req.body.showReviews === 'on' ? 'enabled' : 'disabled';
         console.log(`[Settings] Toggle Reviews: ${showReviews}`);
-        await Setting.set('showReviews', showReviews);
-        res.redirect('/admin');
+        await Setting.set('reviews_visibility', showReviews);
+        res.redirect('/admin?updated=' + Date.now());
     } catch (err) {
         console.error('Error toggling reviews setting:', err);
         res.redirect('/admin');

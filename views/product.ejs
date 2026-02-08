@@ -154,7 +154,7 @@
     </div>
 
     <!-- Reviews Section -->
-    <% if (siteSettings && siteSettings.showReviews !==false) { %>
+    <% if (!siteSettings || siteSettings.reviews_visibility !=='disabled' ) { %>
         <div class="row mt-5">
             <div class="col-12">
                 <div class="card shadow-sm">

@@ -125,8 +125,8 @@
                             </div>
                             <div class="form-check form-switch fs-4">
                                 <input class="form-check-input" type="checkbox" name="showReviews" role="switch"
-                                    onchange="this.form.submit()" <%=(siteSettings && siteSettings.showReviews !==false)
-                                    ? 'checked' : '' %>>
+                                    onchange="this.form.submit()" <%=(siteSettings &&
+                                    siteSettings.reviews_visibility==='disabled' ) ? '' : 'checked' %>>
                             </div>
                         </div>
                     </form>
