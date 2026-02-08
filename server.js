@@ -438,8 +438,7 @@ app.post('/admin/settings/toggle-reviews', requireAuth, (req, res) => {
     console.log('[Route] Toggle Reviews POST Hit (Legacy/Cached)');
     res.redirect('/admin?error=' + encodeURIComponent('Please refresh the page to update settings'));
 });
-    }
-});
+
 
 
 // Start Server
