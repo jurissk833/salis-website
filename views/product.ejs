@@ -4,37 +4,90 @@
         <!-- Product Image -->
         <div class="col-md-6 mb-4 mb-md-0">
             <div class="mb-3 d-flex align-items-center justify-content-center bg-light rounded shadow-sm"
-                style="height: 500px; overflow: hidden;">
+                style="height: 500px; overflow: hidden; position: relative;">
+
+                <!-- Main Image -->
                 <img id="mainImage"
                     src="<%= product.image ? (product.image.startsWith('http') ? product.image : '/uploads/' + product.image) : 'https://placehold.co/600x600?text=No+Image' %>"
                     class="img-fluid" alt="<%= product.title %>"
                     style="max-height: 100%; max-width: 100%; object-fit: contain;">
+
+                <!-- Main Video (Hidden by default) -->
+                <iframe id="mainVideo" style="display: none; width: 100%; height: 100%;" src="" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
             </div>
-            <% if (product.gallery && product.gallery.length> 0) { %>
+
+            <% if ((product.gallery && product.gallery.length> 0) || product.video) { %>
                 <div class="d-flex gap-2 overflow-auto py-2">
                     <!-- Main image as first thumbnail -->
                     <img src="<%= product.image ? (product.image.startsWith('http') ? product.image : '/uploads/' + product.image) : 'https://placehold.co/600x600?text=No+Image' %>"
                         class="gallery-thumb rounded border border-warning"
                         style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border-width: 2px !important;"
-                        onclick="changeImage(this.src, this)">
+                        onclick="showMedia('image', this.src, this)">
 
-                    <% product.gallery.forEach(img=> { %>
-                        <img src="<%= img.startsWith('http') ? img : '/uploads/' + img %>"
-                            class="gallery-thumb rounded border"
-                            style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
-                            onclick="changeImage(this.src, this)">
-                        <% }) %>
+                    <!-- Gallery Images -->
+                    <% if (product.gallery) { %>
+                        <% product.gallery.forEach(img=> { %>
+                            <img src="<%= img.startsWith('http') ? img : '/uploads/' + img %>"
+                                class="gallery-thumb rounded border"
+                                style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
+                                onclick="showMedia('image', this.src, this)">
+                            <% }) %>
+                                <% } %>
+
+                                    <!-- Video Thumbnail -->
+                                    <% if (product.video) { // Simple regex to extract ID const
+                                        videoIdMatch=product.video.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+                                        const videoId=videoIdMatch ? videoIdMatch[1] : '' ; const thumbUrl=videoId ?
+                                        `https://img.youtube.com/vi/${videoId}/0.jpg`
+                                        : 'https://placehold.co/80x80?text=Video' ; %>
+                                        <div class="gallery-thumb rounded border d-flex align-items-center justify-content-center bg-dark text-white position-relative"
+                                            style="min-width: 80px; width: 80px; height: 80px; cursor: pointer; overflow: hidden;"
+                                            onclick="showMedia('video', '<%= product.video %>', this)">
+                                            <img src="<%= thumbUrl %>"
+                                                style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7;">
+                                            <span class="position-absolute fs-4">▶</span>
+                                        </div>
+                                        <% } %>
                 </div>
+
                 <script>
-                    function changeImage(src, element) {
-                        document.getElementById('mainImage').src = src;
-                        // Update active state
+                    function showMedia(type, source, element) {
+                        const mainImage = document.getElementById('mainImage');
+                        const mainVideo = document.getElementById('mainVideo');
+
+                        // Reset borders
                         document.querySelectorAll('.gallery-thumb').forEach(el => {
                             el.classList.remove('border-warning');
                             el.style.borderWidth = '1px';
                         });
-                        element.classList.add('border-warning');
-                        element.style.borderWidth = '2px';
+
+                        // Set active border
+                        if (element) {
+                            element.classList.add('border-warning');
+                            element.style.borderWidth = '2px';
+                        }
+
+                        if (type === 'image') {
+                            mainImage.src = source;
+                            mainImage.style.display = 'block';
+                            mainVideo.style.display = 'none';
+                            mainVideo.src = ''; // Stop video
+                        } else if (type === 'video') {
+                            mainImage.style.display = 'none';
+                            mainVideo.style.display = 'block';
+
+                            // Convert to embed URL
+                            let embedUrl = source;
+                            const videoIdMatch = source.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+                            if (videoIdMatch && videoIdMatch[1]) {
+                                embedUrl = `https://www.youtube.com/embed/${videoIdMatch[1]}?autoplay=1`;
+                            }
+
+                            mainVideo.src = embedUrl;
+                        }
                     }
                 </script>
                 <% } %>

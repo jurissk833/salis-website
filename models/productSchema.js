@@ -32,6 +32,10 @@ const productSchema = new mongoose.Schema({
     warranty: {
         type: String,
         default: ''
+    },
+    video: {
+        type: String, // YouTube URL
+        required: false
     }
 }, {
     timestamps: true,

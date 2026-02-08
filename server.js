@@ -200,7 +200,7 @@ app.get('/admin', requireAuth, async (req, res) => {
 
 app.post('/admin/add', requireAuth, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'gallery', maxCount: 10 }]), async (req, res) => {
     try {
-        const { title, description, price, features, warranty } = req.body;
+        const { title, description, price, features, warranty, video } = req.body;
         // With Cloudinary storage, req.file.path is the full URL
         const image = (req.files && req.files['image']) ? req.files['image'][0].path : null;
 
@@ -220,7 +220,8 @@ app.post('/admin/add', requireAuth, upload.fields([{ name: 'image', maxCount: 1 
             image,
             gallery,
             features: featuresArray,
-            warranty
+            warranty,
+            video
         });
         res.redirect('/admin');
     } catch (err) {
@@ -241,13 +242,14 @@ app.get('/admin/edit/:id', requireAuth, async (req, res) => {
 
 app.post('/admin/edit/:id', requireAuth, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'gallery', maxCount: 10 }]), async (req, res) => {
     try {
-        const { title, description, price, features, warranty, deleteMainImage, deletedGalleryImages } = req.body;
+        const { title, description, price, features, warranty, video, deleteMainImage, deletedGalleryImages } = req.body;
         const updateData = {
             title,
             description,
             price,
             features: features ? features.split('\n').map(f => f.trim()).filter(f => f) : [],
-            warranty
+            warranty,
+            video
         };
 
         // Handle Main Image

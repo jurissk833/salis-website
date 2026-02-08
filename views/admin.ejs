@@ -159,6 +159,14 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-bold">
+                                <%= lang==='ar' ? 'رابط فيديو يوتيوب (اختياري)' : 'YouTube Video URL (Optional)' %>
+                            </label>
+                            <input type="url" name="video" class="form-control"
+                                placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">
                                 <%= t.admin.form.image %>
                             </label>
                             <input type="file" name="image" class="form-control" accept="image/*">
