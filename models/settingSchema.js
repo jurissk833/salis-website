@@ -7,8 +7,7 @@ const settingSchema = new mongoose.Schema({
         unique: true
     },
     value: {
-        type: mongoose.Schema.Types.Mixed, // Can be string, number, object, etc.
-        required: true
+        type: mongoose.Schema.Types.Mixed // Can be string, number, object, etc.
     }
 }, {
     timestamps: true
