@@ -23,8 +23,15 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 // Middleware
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use((req, res, next) => {
+    // Debug Middleware
+    if (req.method === 'POST') {
+        console.log(`[Debug] POST ${req.url}`, req.body);
+    }
+    next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
@@ -409,7 +416,11 @@ app.post('/admin/settings/hero', requireAuth, upload.single('heroImage'), async 
 });
 
 app.post('/admin/settings/toggle-reviews', requireAuth, async (req, res) => {
+    console.log('[Route] Toggle Reviews Hit');
     try {
+        if (!req.body) {
+            throw new Error('Request body is undefined');
+        }
         const showReviews = req.body.showReviews === 'on' ? 'enabled' : 'disabled';
         console.log(`[Settings] Toggle Reviews: ${showReviews}`);
         await Setting.set('reviews_visibility', showReviews);
