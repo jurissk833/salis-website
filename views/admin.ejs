@@ -1,213 +1,229 @@
 <%- include('partials/header') %>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-black" style="color: black !important;">
-            <%= t.admin.dashboard %>
-        </h2>
-        <a href="/admin/logout" class="btn btn-outline-danger btn-sm">
-            <%= t.admin.logout %>
-        </a>
-    </div>
+    <!-- Debug/Error Display -->
+    <% if (typeof query !=='undefined' && query.error) { %>
+        <div class="alert alert-danger my-3">
+            <strong>Error:</strong>
+            <%= query.error %>
+        </div>
+        <% } %>
 
-    <div class="row">
-        <!-- Product List -->
-        <div class="col-lg-8">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-white fw-bold">
-                    <%= t.admin.existingProducts %>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-3">
-                                        <%= t.admin.image %>
-                                    </th>
-                                    <th>
-                                        <%= t.admin.title %>
-                                    </th>
-                                    <th>
-                                        <%= t.admin.price %>
-                                    </th>
-                                    <th class="text-end pe-3">
-                                        <%= t.admin.actions %>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (products.length> 0) { %>
-                                    <% products.forEach(p=> { %>
+            <details class="mb-3">
+                <summary class="text-muted small">Debug Site Settings (Click to expand)</summary>
+                <pre
+                    class="bg-light p-2 small mt-2"><%= (typeof siteSettings !== 'undefined') ? JSON.stringify(siteSettings, null, 2) : 'undefined' %></pre>
+            </details>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-black" style="color: black !important;">
+                    <%= t.admin.dashboard %>
+                </h2>
+                <a href="/admin/logout" class="btn btn-outline-danger btn-sm">
+                    <%= t.admin.logout %>
+                </a>
+            </div>
+
+            <div class="row">
+                <!-- Product List -->
+                <div class="col-lg-8">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white fw-bold">
+                            <%= t.admin.existingProducts %>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0 align-middle">
+                                    <thead class="table-light">
                                         <tr>
-                                            <td class="ps-3">
-                                                <img src="<%= p.image ? (p.image.startsWith('http') ? p.image : '/uploads/' + p.image) : 'https://placehold.co/50' %>"
-                                                    width="40" height="40" class="rounded object-fit-cover">
-                                            </td>
-                                            <td>
-                                                <%= p.title %>
-                                            </td>
-                                            <td>
-                                                <%= p.price %>
-                                                    <%= t.product.currency %>
-                                            </td>
-                                            <td class="text-end pe-3">
-                                                <div class="d-flex justify-content-end gap-2">
-                                                    <a href="/admin/edit/<%= p.id %>" class="btn btn-sm btn-dark">
-                                                        <%= t.admin.edit %>
-                                                    </a>
-                                                    <form action="/admin/delete/<%= p.id %>" method="POST"
-                                                        onsubmit="return confirm('<%= t.admin.confirmDelete %>');">
-                                                        <button type="submit" class="btn btn-sm btn-danger">
-                                                            <%= t.admin.delete %>
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
+                                            <th class="ps-3">
+                                                <%= t.admin.image %>
+                                            </th>
+                                            <th>
+                                                <%= t.admin.title %>
+                                            </th>
+                                            <th>
+                                                <%= t.admin.price %>
+                                            </th>
+                                            <th class="text-end pe-3">
+                                                <%= t.admin.actions %>
+                                            </th>
                                         </tr>
-                                        <% }) %>
-                                            <% } else { %>
+                                    </thead>
+                                    <tbody>
+                                        <% if (products.length> 0) { %>
+                                            <% products.forEach(p=> { %>
                                                 <tr>
-                                                    <td colspan="4" class="text-center py-4 text-muted">
-                                                        <%= t.admin.noProducts %>
+                                                    <td class="ps-3">
+                                                        <img src="<%= p.image ? (p.image.startsWith('http') ? p.image : '/uploads/' + p.image) : 'https://placehold.co/50' %>"
+                                                            width="40" height="40" class="rounded object-fit-cover">
+                                                    </td>
+                                                    <td>
+                                                        <%= p.title %>
+                                                    </td>
+                                                    <td>
+                                                        <%= p.price %>
+                                                            <%= t.product.currency %>
+                                                    </td>
+                                                    <td class="text-end pe-3">
+                                                        <div class="d-flex justify-content-end gap-2">
+                                                            <a href="/admin/edit/<%= p.id %>"
+                                                                class="btn btn-sm btn-dark">
+                                                                <%= t.admin.edit %>
+                                                            </a>
+                                                            <form action="/admin/delete/<%= p.id %>" method="POST"
+                                                                onsubmit="return confirm('<%= t.admin.confirmDelete %>');">
+                                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                                    <%= t.admin.delete %>
+                                                                </button>
+                                                            </form>
+                                                        </div>
                                                     </td>
                                                 </tr>
-                                                <% } %>
-                            </tbody>
-                        </table>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <tr>
+                                                            <td colspan="4" class="text-center py-4 text-muted">
+                                                                <%= t.admin.noProducts %>
+                                                            </td>
+                                                        </tr>
+                                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Site Settings Section -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white fw-bold">
+                            <%= lang==='ar' ? 'إعدادات الموقع' : 'Site Settings' %>
+                        </div>
+                        <div class="card-body">
+                            <!-- Hero Image Form -->
+                            <form action="/admin/settings/hero" method="POST" enctype="multipart/form-data"
+                                class="mb-4 pb-4 border-bottom">
+                                <div class="mb-0">
+                                    <label class="form-label small fw-bold">
+                                        <%= lang==='ar' ? 'صورة الواجهة الرئيسية' : 'Home Page Hero Image' %>
+                                    </label>
+                                    <% if (siteSettings && siteSettings.heroImage) { %>
+                                        <div class="mb-2">
+                                            <img src="<%= siteSettings.heroImage.startsWith('http') ? siteSettings.heroImage : '/uploads/' + siteSettings.heroImage %>"
+                                                class="img-fluid rounded" style="max-height: 150px;">
+                                        </div>
+                                        <% } %>
+                                            <div class="input-group">
+                                                <input type="file" name="heroImage" class="form-control"
+                                                    accept="image/*" required>
+                                                <button type="submit" class="btn btn-dark">
+                                                    <%= lang==='ar' ? 'تحديث' : 'Update' %>
+                                                </button>
+                                            </div>
+                                            <div class="form-text text-muted small">
+                                                <%= lang==='ar' ? 'يفضل استخدام صورة عالية الدقة (1920x1080)'
+                                                    : 'Recommended resolution: 1920x1080' %>
+                                            </div>
+                                </div>
+                            </form>
+
+                            <!-- Reviews Toggle Form -->
+                            <form action="/admin/settings/toggle-reviews" method="POST">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <label class="fw-bold mb-0 d-block">
+                                            <%= lang==='ar' ? 'نظام التقييمات' : 'Reviews System' %>
+                                        </label>
+                                        <div class="form-text text-muted small">
+                                            <%= lang==='ar' ? 'إظهار أو إخفاء التقييمات من جميع المنتجات'
+                                                : 'Show or hide reviews on all product pages' %>
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-switch fs-4">
+                                        <input class="form-check-input" type="checkbox" name="showReviews" role="switch"
+                                            onchange="this.form.submit()" <%=(siteSettings &&
+                                            siteSettings.reviews_visibility==='disabled' ) ? '' : 'checked' %>>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Product Form -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-warning">
+                        <div class="card-header bg-warning text-dark fw-bold">
+                            <%= t.admin.addProduct %>
+                        </div>
+                        <div class="card-body">
+                            <form action="/admin/add" method="POST" enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">
+                                        <%= t.admin.form.title %>
+                                    </label>
+                                    <input type="text" name="title" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">
+                                        <%= t.admin.form.price %>
+                                    </label>
+                                    <input type="number" name="price" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">
+                                        <%= t.admin.form.description %>
+                                    </label>
+                                    <textarea name="description" class="form-control" rows="3" required></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">
+                                        <%= t.admin.form.features %>
+                                    </label>
+                                    <textarea name="features" class="form-control" rows="3"
+                                        placeholder="<%= t.admin.form.featuresPlaceholder %>"></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">
+                                        <%= t.admin.form.warranty %>
+                                    </label>
+                                    <input type="text" name="warranty" class="form-control"
+                                        placeholder="<%= t.admin.form.warrantyPlaceholder %>">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">
+                                        <%= lang==='ar' ? 'رابط فيديو يوتيوب (اختياري)' : 'YouTube Video URL (Optional)'
+                                            %>
+                                    </label>
+                                    <input type="url" name="video" class="form-control"
+                                        placeholder="https://www.youtube.com/watch?v=...">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">
+                                        <%= t.admin.form.image %>
+                                    </label>
+                                    <input type="file" name="image" class="form-control" accept="image/*">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">
+                                        <%= lang==='ar' ? 'صور المعرض (اختياري)' : 'Gallery Images (Optional)' %>
+                                    </label>
+                                    <input type="file" name="gallery" class="form-control" accept="image/*" multiple>
+                                </div>
+
+                                <button type="submit" class="btn btn-dark w-100">
+                                    <%= t.admin.form.submit %>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Site Settings Section -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-white fw-bold">
-                    <%= lang==='ar' ? 'إعدادات الموقع' : 'Site Settings' %>
-                </div>
-                <div class="card-body">
-                    <!-- Hero Image Form -->
-                    <form action="/admin/settings/hero" method="POST" enctype="multipart/form-data"
-                        class="mb-4 pb-4 border-bottom">
-                        <div class="mb-0">
-                            <label class="form-label small fw-bold">
-                                <%= lang==='ar' ? 'صورة الواجهة الرئيسية' : 'Home Page Hero Image' %>
-                            </label>
-                            <% if (siteSettings && siteSettings.heroImage) { %>
-                                <div class="mb-2">
-                                    <img src="<%= siteSettings.heroImage.startsWith('http') ? siteSettings.heroImage : '/uploads/' + siteSettings.heroImage %>"
-                                        class="img-fluid rounded" style="max-height: 150px;">
-                                </div>
-                                <% } %>
-                                    <div class="input-group">
-                                        <input type="file" name="heroImage" class="form-control" accept="image/*"
-                                            required>
-                                        <button type="submit" class="btn btn-dark">
-                                            <%= lang==='ar' ? 'تحديث' : 'Update' %>
-                                        </button>
-                                    </div>
-                                    <div class="form-text text-muted small">
-                                        <%= lang==='ar' ? 'يفضل استخدام صورة عالية الدقة (1920x1080)'
-                                            : 'Recommended resolution: 1920x1080' %>
-                                    </div>
-                        </div>
-                    </form>
-
-                    <!-- Reviews Toggle Form -->
-                    <form action="/admin/settings/toggle-reviews" method="POST">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <label class="fw-bold mb-0 d-block">
-                                    <%= lang==='ar' ? 'نظام التقييمات' : 'Reviews System' %>
-                                </label>
-                                <div class="form-text text-muted small">
-                                    <%= lang==='ar' ? 'إظهار أو إخفاء التقييمات من جميع المنتجات'
-                                        : 'Show or hide reviews on all product pages' %>
-                                </div>
-                            </div>
-                            <div class="form-check form-switch fs-4">
-                                <input class="form-check-input" type="checkbox" name="showReviews" role="switch"
-                                    onchange="this.form.submit()" <%=(siteSettings &&
-                                    siteSettings.reviews_visibility==='disabled' ) ? '' : 'checked' %>>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add Product Form -->
-        <div class="col-lg-4">
-            <div class="card shadow-sm border-warning">
-                <div class="card-header bg-warning text-dark fw-bold">
-                    <%= t.admin.addProduct %>
-                </div>
-                <div class="card-body">
-                    <form action="/admin/add" method="POST" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">
-                                <%= t.admin.form.title %>
-                            </label>
-                            <input type="text" name="title" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">
-                                <%= t.admin.form.price %>
-                            </label>
-                            <input type="number" name="price" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">
-                                <%= t.admin.form.description %>
-                            </label>
-                            <textarea name="description" class="form-control" rows="3" required></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">
-                                <%= t.admin.form.features %>
-                            </label>
-                            <textarea name="features" class="form-control" rows="3"
-                                placeholder="<%= t.admin.form.featuresPlaceholder %>"></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">
-                                <%= t.admin.form.warranty %>
-                            </label>
-                            <input type="text" name="warranty" class="form-control"
-                                placeholder="<%= t.admin.form.warrantyPlaceholder %>">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">
-                                <%= lang==='ar' ? 'رابط فيديو يوتيوب (اختياري)' : 'YouTube Video URL (Optional)' %>
-                            </label>
-                            <input type="url" name="video" class="form-control"
-                                placeholder="https://www.youtube.com/watch?v=...">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">
-                                <%= t.admin.form.image %>
-                            </label>
-                            <input type="file" name="image" class="form-control" accept="image/*">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">
-                                <%= lang==='ar' ? 'صور المعرض (اختياري)' : 'Gallery Images (Optional)' %>
-                            </label>
-                            <input type="file" name="gallery" class="form-control" accept="image/*" multiple>
-                        </div>
-
-                        <button type="submit" class="btn btn-dark w-100">
-                            <%= t.admin.form.submit %>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <%- include('partials/footer') %>
+            <%- include('partials/footer') %>
