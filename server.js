@@ -415,15 +415,17 @@ app.post('/admin/settings/hero', requireAuth, upload.single('heroImage'), async 
     }
 });
 
-app.post('/admin/settings/toggle-reviews', requireAuth, async (req, res) => {
-    console.log('[Route] Toggle Reviews Hit');
+app.get('/admin/settings/toggle-reviews', requireAuth, async (req, res) => {
+    console.log('[Route] Toggle Reviews GET Hit');
     try {
-        if (!req.body) {
-            throw new Error('Request body is undefined');
-        }
-        const showReviews = req.body.showReviews === 'on' ? 'enabled' : 'disabled';
+        // Use query params instead of body to bypass parsing issues
+        const showReviews = req.query.showReviews === 'on' ? 'enabled' : 'disabled';
         console.log(`[Settings] Toggle Reviews: ${showReviews}`);
         await Setting.set('reviews_visibility', showReviews);
+
+        // Also try to clean up legacy key if possible, or just ignore it
+        // await Setting.set('showReviews', null); 
+
         res.redirect('/admin?updated=' + Date.now() + '&reviews_status=' + showReviews);
     } catch (err) {
         console.error('Error toggling reviews setting:', err);
