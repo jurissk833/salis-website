@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const bodyParser = require('body-parser');
 
 // Auth & Config
@@ -31,8 +32,16 @@ app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 app.use(session({
     secret: process.env.SESSION_SECRET || 'salis-secret-key-123',
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // Set to true if using HTTPS
+    saveUninitialized: false, // Don't create session until something stored
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        collectionName: 'sessions',
+        ttl: 14 * 24 * 60 * 60 // 14 days
+    }),
+    cookie: {
+        secure: false, // Set to true if using HTTPS strictly
+        maxAge: 14 * 24 * 60 * 60 * 1000 // 14 days
+    }
 }));
 
 // Passport Setup
@@ -400,7 +409,7 @@ app.post('/admin/settings/toggle-reviews', requireAuth, async (req, res) => {
         const showReviews = req.body.showReviews === 'on' ? 'enabled' : 'disabled';
         console.log(`[Settings] Toggle Reviews: ${showReviews}`);
         await Setting.set('reviews_visibility', showReviews);
-        res.redirect('/admin?updated=' + Date.now());
+        res.redirect('/admin?updated=' + Date.now() + '&reviews_status=' + showReviews);
     } catch (err) {
         console.error('Error toggling reviews setting:', err);
         res.redirect('/admin');
