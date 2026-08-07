@@ -36,15 +36,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 // Session Setup
+const mongoStore = MongoStore.create({
+    mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/salis',
+    collectionName: 'sessions',
+    ttl: 14 * 24 * 60 * 60, // 14 days
+    mongoOptions: {
+        serverSelectionTimeoutMS: 5000
+    }
+});
+
+mongoStore.on('error', (err) => {
+    console.error('MongoStore session connection error:', err.message);
+});
+
 app.use(session({
     secret: process.env.SESSION_SECRET || 'salis-secret-key-123',
     resave: false,
     saveUninitialized: false, // Don't create session until something stored
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URI,
-        collectionName: 'sessions',
-        ttl: 14 * 24 * 60 * 60 // 14 days
-    }),
+    store: mongoStore,
     cookie: {
         secure: false, // Set to true if using HTTPS strictly
         maxAge: 14 * 24 * 60 * 60 * 1000 // 14 days
@@ -56,8 +65,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    clientID: process.env.GOOGLE_CLIENT_ID || 'dummy',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'dummy',
     callbackURL: (process.env.BASE_URL || process.env.RENDER_EXTERNAL_URL || "http://localhost:3000") + "/auth/google/callback"
 },
     function (accessToken, refreshToken, profile, cb) {
@@ -68,10 +77,6 @@ passport.use(new GoogleStrategy({
         if (allowedEmails.includes(userEmail)) {
             return cb(null, profile);
         } else {
-            // We can't access session/locale here easily in standard passport callback without extra work, 
-            // so we'll pass a generic code or english message that can be mapped if needed, 
-            // but for now let's use a simple English fallback that the UI can choose to ignore or display.
-            // Or we can assume 'ar' default for backend errors if we really want.
             return cb(null, false, { message: translations['ar'].login.accessDenied });
         }
     }
@@ -90,8 +95,6 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Models
-// Models
-// Models
 const Product = require('./models/productModel');
 const Setting = require('./models/settingModel');
 const translations = require('./data/translations');
@@ -107,22 +110,21 @@ const upload = multer({ storage: storage });
 
 // Localization Middleware (Cookie > Session > Default)
 const localeMiddleware = async (req, res, next) => {
-    let lang = req.cookies.lang || req.session.lang || 'ar';
+    let lang = (req.cookies && req.cookies.lang) || (req.session && req.session.lang) || 'ar';
 
     // Ensure valid lang
     if (!['ar', 'en'].includes(lang)) {
         lang = 'ar';
     }
 
-    // Sync session/cookie just in case
-    if (req.session.lang !== lang) req.session.lang = lang;
+    // Sync session/cookie safely
+    if (req.session && req.session.lang !== lang) {
+        try { req.session.lang = lang; } catch (e) {}
+    }
 
     res.locals.lang = lang;
-    res.locals.t = translations[lang];
-    res.locals.dir = translations[lang].dir;
-
-    // Debug translations
-    // console.log(`[Debug] Lang: ${lang}, Footer Keys:`, Object.keys(res.locals.t.footer));
+    res.locals.t = translations[lang] || translations['ar'];
+    res.locals.dir = (translations[lang] && translations[lang].dir) || 'rtl';
 
     // Load Site Settings
     try {
