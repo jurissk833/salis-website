@@ -172,7 +172,9 @@ app.get('/change-lang/:lang', (req, res) => {
     if (['ar', 'en'].includes(newLang)) {
         // Set Cookie (Max Age: 30 Days)
         res.cookie('lang', newLang, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
-        req.session.lang = newLang; // Keep session synced
+        if (req.session) {
+            try { req.session.lang = newLang; } catch (e) {}
+        }
     }
 
     // Safe Back Redirect
@@ -216,8 +218,9 @@ app.get('/auth/google',
 
 app.get('/auth/google/callback',
     (req, res, next) => {
+        const lang = (req.session && req.session.lang) || 'ar';
         passport.authenticate('google', {
-            failureRedirect: `/admin/login?error=${encodeURIComponent(translations[req.session.lang || 'ar'].login.accessDenied)}`
+            failureRedirect: `/admin/login?error=${encodeURIComponent(translations[lang].login.accessDenied)}`
         })(req, res, next);
     },
     function (req, res) {
