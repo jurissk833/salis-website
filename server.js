@@ -9,6 +9,7 @@ require('dotenv').config();
 console.log(`[Startup] Server starting at ${new Date().toISOString()}`);
 
 const app = express();
+app.set('trust proxy', 1); // Trust Vercel HTTPS reverse proxy
 const PORT = process.env.PORT || 3000;
 
 // Request Logger
@@ -35,13 +36,18 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
-// Session Setup (Ultra-fast, resilient MemoryStore for Vercel Serverless Uptime)
+// Persistent MongoDB Session Store (Guarantees logged in status on Vercel Serverless)
 app.use(session({
     secret: process.env.SESSION_SECRET || 'salis-secret-key-123',
     resave: false,
-    saveUninitialized: false, // Don't create session until something stored
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/salis',
+        ttl: 14 * 24 * 60 * 60 // 14 days
+    }),
     cookie: {
-        secure: false, // Set to true if using HTTPS strictly
+        secure: false,
+        sameSite: 'lax',
         maxAge: 14 * 24 * 60 * 60 * 1000 // 14 days
     }
 }));
