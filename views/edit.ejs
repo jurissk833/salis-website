@@ -12,7 +12,7 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    <form action="/admin/edit/<%= product.id %>" method="POST" enctype="multipart/form-data">
+                    <form action="/admin/edit/<%= product.id %>" method="POST" enctype="multipart/form-data" onsubmit="return handleFormUploadCompress(event, this)">
 
                         <!-- 1. Product Information -->
                         <div class="mb-3">
@@ -262,6 +262,77 @@
                     alert('Error deleting review');
                 }
             }
+        }
+
+        async function compressImageFile(file, maxWidth = 1600, maxHeight = 1600, quality = 0.82) {
+            if (!file || !file.type.startsWith('image/')) return file;
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > maxWidth || height > maxHeight) {
+                            if (width > height) {
+                                height = Math.round((height * maxWidth) / width);
+                                width = maxWidth;
+                            } else {
+                                width = Math.round((width * maxHeight) / height);
+                                height = maxHeight;
+                            }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        canvas.toBlob((blob) => {
+                            if (!blob || blob.size >= file.size) {
+                                resolve(file);
+                            } else {
+                                const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+                                    type: 'image/jpeg',
+                                    lastModified: Date.now()
+                                });
+                                resolve(compressedFile);
+                            }
+                        }, 'image/jpeg', quality);
+                    };
+                    img.onerror = () => resolve(file);
+                    img.src = e.target.result;
+                };
+                reader.onerror = () => resolve(file);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleFormUploadCompress(event, form) {
+            event.preventDefault();
+            const btn = form.querySelector('button[type="submit"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<%= lang === "ar" ? "جاري تحسين الصور والتحديث..." : "Compressing & Updating..." %>';
+            }
+
+            try {
+                const fileInputs = form.querySelectorAll('input[type="file"]');
+                for (const input of fileInputs) {
+                    if (input.files && input.files.length > 0) {
+                        const dt = new DataTransfer();
+                        for (let i = 0; i < input.files.length; i++) {
+                            const compressed = await compressImageFile(input.files[i]);
+                            dt.items.add(compressed);
+                        }
+                        input.files = dt.files;
+                    }
+                }
+            } catch (err) {
+                console.error('Client compression error:', err);
+            }
+
+            form.submit();
+            return false;
         }
     </script>
 

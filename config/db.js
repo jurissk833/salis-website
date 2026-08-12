@@ -3,20 +3,20 @@ const mongoose = require('mongoose');
 let isConnected = false;
 
 const connectDB = async () => {
-    if (isConnected) {
+    if (isConnected || mongoose.connection.readyState === 1) {
         return;
     }
 
     try {
-        const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/salis', {
-            serverSelectionTimeoutMS: 5000,
-            socketTimeoutMS: 45000,
+        const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/salis';
+        const conn = await mongoose.connect(mongoUri, {
+            serverSelectionTimeoutMS: 3000,
+            connectTimeoutMS: 3000,
         });
         isConnected = !!conn.connections[0].readyState;
         console.log(`MongoDB Connected: ${conn.connection.host}`);
     } catch (error) {
         console.error(`MongoDB Connection Warning: ${error.message}`);
-        // Do not crash process with process.exit(1) so web server stays up
     }
 };
 

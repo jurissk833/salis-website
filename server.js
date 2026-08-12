@@ -35,40 +35,16 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
-// Session Setup
-const mongoStore = MongoStore.create({
-    mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/salis',
-    collectionName: 'sessions',
-    ttl: 14 * 24 * 60 * 60, // 14 days
-    mongoOptions: {
-        serverSelectionTimeoutMS: 5000
-    }
-});
-
-mongoStore.on('error', (err) => {
-    console.error('MongoStore session connection error:', err.message);
-});
-
-const sessionMiddleware = session({
+// Session Setup (Ultra-fast, resilient MemoryStore for Vercel Serverless Uptime)
+app.use(session({
     secret: process.env.SESSION_SECRET || 'salis-secret-key-123',
     resave: false,
     saveUninitialized: false, // Don't create session until something stored
-    store: mongoStore,
     cookie: {
         secure: false, // Set to true if using HTTPS strictly
         maxAge: 14 * 24 * 60 * 60 * 1000 // 14 days
     }
-});
-
-// Resilient Session Middleware Wrapper (Suppresses Session DB Connection Errors)
-app.use((req, res, next) => {
-    sessionMiddleware(req, res, (err) => {
-        if (err) {
-            console.error('[Session Store Warning Suppressed]:', err.message);
-        }
-        next();
-    });
-});
+}));
 
 // Passport Setup
 app.use(passport.initialize());
@@ -110,8 +86,8 @@ const Setting = require('./models/settingModel');
 const translations = require('./data/translations');
 
 const connectDB = require('./config/db');
-// Connect to Database
-connectDB();
+// Connect to Database asynchronously without crashing
+connectDB().catch(err => console.error('[DB Connect Error]:', err.message));
 
 const { storage } = require('./config/cloudinary');
 // Multer Setup for Image Uploads (Cloudinary)
@@ -120,7 +96,16 @@ const upload = multer({ storage: storage });
 
 // Localization Middleware (Cookie > Session > Default)
 const localeMiddleware = async (req, res, next) => {
-    let lang = (req.cookies && req.cookies.lang) || (req.session && req.session.lang) || 'ar';
+    try {
+        await connectDB();
+    } catch (e) {
+        console.error('DB connect in middleware warning:', e.message);
+    }
+
+    const cookies = req.cookies || {};
+    const sessionObj = req.session || {};
+
+    let lang = cookies.lang || sessionObj.lang || 'ar';
 
     // Ensure valid lang
     if (!['ar', 'en'].includes(lang)) {
